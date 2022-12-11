@@ -43,8 +43,12 @@ async def on_message(message):
                 ai_response = await get_ai_response(user_message)
             except:
                 ai_response = AI_ERROR_MESSAGE
-
-            await message.reply(ai_response)
+            print("Response length:", len(ai_response))
+            if len(ai_response) > 2000:
+                for section in range(0, len(ai_response), 2000):
+                    await message.reply(ai_response[section:section + 2000])
+            else:
+                await message.reply(ai_response)
 
 @client.event
 async def on_ready():
