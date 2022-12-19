@@ -1,4 +1,4 @@
-from chronological import *
+import openai
 from dotenv import load_dotenv
 import os
 import discord
