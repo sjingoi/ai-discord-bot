@@ -16,5 +16,5 @@ class Serv(BaseHTTPRequestHandler):
         self.wfile.write(bytes(file_to_open, 'utf-8'))
 
 
-httpd = HTTPServer(('192.168.0.60', 8080), Serv)
+httpd = HTTPServer(('192.168.0.26', 8080), Serv)
 httpd.serve_forever()

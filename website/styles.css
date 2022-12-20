@@ -34,16 +34,16 @@ body {
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
 }
 
 .main {
-    transform: translate(0, 3rem);
+    transform: translate(0, 5rem);
     text-align: center;
 }
 
 .main p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     display: inline;
     transform: translate(-3rem, 0);
 }
@@ -72,3 +72,8 @@ h1 {
     margin: 1rem;
 }
 
+.secondpage {
+    background-color: white;
+    transform: translate(0rem, 29rem);
+    padding: 22rem;
+}
