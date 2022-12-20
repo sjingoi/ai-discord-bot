@@ -7,7 +7,7 @@ class Serv(BaseHTTPRequestHandler):
         if self.path == '/':
             self.path = '/index.html'
         try:
-            file_to_open = open(self.path[1:]).read()
+            file_to_open = open("website/" + self.path[1:]).read()
             self.send_response(200)
         except:
             file_to_open = "File not found"
@@ -16,5 +16,5 @@ class Serv(BaseHTTPRequestHandler):
         self.wfile.write(bytes(file_to_open, 'utf-8'))
 
 
-httpd = HTTPServer(('localhost', 8080), Serv)
+httpd = HTTPServer(('192.168.0.60', 8080), Serv)
 httpd.serve_forever()
