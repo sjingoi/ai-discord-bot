@@ -5,6 +5,7 @@ body {
     background-color: rgb(39 41 52);
     color: white;
     list-style-type: none;
+    height: 100vh;
 }
 
 .navbar {
@@ -75,5 +76,5 @@ h1 {
 .secondpage {
     background-color: white;
     transform: translate(0rem, 29rem);
-    padding: 22rem;
+    height: 100vh;
 }
