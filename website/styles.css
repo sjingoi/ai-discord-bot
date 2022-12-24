@@ -60,7 +60,7 @@ h1 {
 }
 
 .add p a {
-    background-color: #e04912;
+    background-color: #FF4500;
     color: white;
     font-weight: bold;
 }
@@ -87,9 +87,18 @@ h1 {
     display: none;
     font-size: 3rem;
     z-index: 1;
-    max-width: 200px;
 }
 
 a:hover {
     color: #FF4500;
+}
+
+@media only screen and (max-width: 175px) {
+    .toggle-button {
+        transform: translate(1rem, 0);
+    }
+
+    .GPTBot {
+        transform: translate(-0.7rem, 0);
+    }
 }
