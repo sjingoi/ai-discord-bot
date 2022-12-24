@@ -79,17 +79,12 @@ h1 {
 
 .toggle-button {
     position: absolute;
-    top: 0.5rem;
+    top: -0.5rem;
     right: 1rem;
     display: none;
-    font-size: 2rem;
+    font-size: 3rem;
     z-index: 1;
 }
-
-ul {
-
-}
-
 
 a:hover {
     color: #FF4500;
