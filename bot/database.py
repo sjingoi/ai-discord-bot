@@ -1,10 +1,21 @@
 import mysql.connector
+import os
+from dotenv import load_dotenv, find_dotenv
+
+env_dir = find_dotenv('secrets.env', True)
+load_dotenv(env_dir)
+
+HOST = os.environ["DB_IP"]
+DATABASE = os.environ["DB_NAME"]
+USERNAME = os.environ["DB_USER"]
+PASSWORD = os.environ["DB_PASSWORD"]
+
 
 mydb = mysql.connector.connect(
-    host = 'localhost',
-    user = 'root',
-    password = '12346789',
-    database = 'gptbotdb'
+    host = HOST,
+    user = USERNAME,
+    password = PASSWORD,
+    database = DATABASE
 )
 
 
@@ -34,6 +45,7 @@ def get_from_dserver_table(server_id: int, collumn: str):
 def update_openai_key(server_id: int, key: int):
     update_dserver(server_id, "openai_key", key)
 
+
 def update_prefix(server_id: int, prefix: str):
     update_dserver(server_id, "cmd_prefix", prefix)
 
@@ -42,3 +54,9 @@ def update_dserver(server_id: int, collumn: str, value: str):
     dbcursor = mydb.cursor()
     dbcursor.execute("UPDATE dservers SET " + collumn + " = '" + value + "' WHERE server_id = " + str(server_id))
     mydb.commit()
+
+
+def server_in_database(server_id: int) -> bool:
+    if get_from_dserver_table(server_id, "server_name") is None:
+        return False
+    return True
