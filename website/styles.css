@@ -1,10 +1,17 @@
+* {
+    text-decoration: none;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: aliceblue;
+}
+
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     background-color: rgb(39 41 52);
-    color: aliceblue;
-    list-style-type: none;
+}
+
+a {
+    transition: 0.2s;
 }
 
 .navbar {
@@ -13,12 +20,6 @@ body {
 
 .navbar .GPTBot {
     font-size: 1.6rem;
-}
-
-.navbar a {
-    text-decoration: none;
-    color: aliceblue;
-    transition: 0.2s;
 }
 
 .navbar ul {
@@ -39,7 +40,7 @@ h1 {
 .main {
     transform: translate(0, 5rem);
     text-align: center;
-    overflow-wrap:break-word;
+    overflow-wrap: break-word;
 }
 
 .main p {
@@ -49,19 +50,17 @@ h1 {
 }
 
 .main p a {
-    text-decoration: none;
     color: black;
     border-radius: 1rem;
     padding: 1rem;
     background-color: aliceblue;
-    transition: 0.2s;
     display: inline-flex;
     transform: translate(0, -1rem);
 }
 
 .add p a {
     background-color: #FF4500;
-    color: white;
+    color: aliceblue;
     font-weight: bold;
 }
 

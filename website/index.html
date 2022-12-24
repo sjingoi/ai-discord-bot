@@ -4,10 +4,8 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="#">
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
         integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-    <!-- <script src="scripts.js"></script> -->
 </head>
 
 <title>AI Discord Bot | GPTBot</title>
@@ -21,7 +19,8 @@
         </div>
         <div class="navbar-links">
             <ul>
-                <li> <a href="https://discord.com/api/oauth2/authorize?client_id=1054881743800385617&permissions=274878221376&scope=bot"target="_blank">Add Bot</a> </li>
+                <li> <a href="https://discord.com/api/oauth2/authorize?client_id=1054881743800385617&permissions=274878221376&scope=bot"
+                        target="_blank">Add Bot</a> </li>
                 <li> <a href="#">Tutorial</a></li>
                 <li> <a href="https://github.com/sjingoi/ai-discord-bot" target="_blank">Github</a></li>
                 <li> <a href="https://openai.com/" target="_blank">OpenAI</a></li>
@@ -45,55 +44,7 @@
         <h1></h1>
     </div>
     -->
-    <script>
-
-        $(".toggle-button").click(function () {
-            $("ul li").css("display", "block");
-            $("ul li").css("text-align", "right");
-            $(".navbar").css("padding", "0");
-            $(".navbar-links li").css("border-bottom", "2px solid #777");
-            $(".navbar-links").css("border-top", "2px solid #777");
-            $(".GPTBot").css("padding", "1rem");
-            $(".navbar-links").slideToggle("fast");
-        });
-
-        function respondNav() {
-
-            WindowWidth = $(window).width();
-
-            if (WindowWidth <= 469) {
-                $(".navbar-links").hide();
-                $("ul").css("display", "block");
-                $("ul").css("float", "none");
-                $("ul").css("text-align", "left");
-                $("ul").css("background-color", "rgb(30 32 40)");
-                $(".navbar-links li").css("padding", "1rem");
-                $("ul").css("transform", "translate(0rem, 0rem)");
-                $(".toggle-button").show();
-            } else {
-                $("ul").css("display", "flex");
-                $("ul").css("float", "right");
-                $(".toggle-button").hide();
-                $(".navbar-links li").css("padding", "0.5rem");
-                $(".navbar").css("padding", "1rem");
-                $(".GPTBot").css("padding", "0rem");
-                $(".navbar-links li").css("border-bottom", "0");
-                $(".navbar-links").css("border-top", "0");
-                $("ul").css("background-color", "rgb(39 41 52)");
-                $("ul").css("transform", "translate(0, -1.8rem)");
-                $(".navbar-links").show();
-            }
-        }
-
-        $(document).ready(function () {
-            respondNav();
-        })
-
-        $(window).resize(function () {
-            respondNav();
-        })
-
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
