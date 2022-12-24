@@ -59,6 +59,9 @@ async def execute_cmd(command: str, message = None):
             if message.author.guild_permissions.administrator:
                 if len(prefix) == 1:
                     database.update_prefix(server_id, prefix)
+                    await message.reply('Prefix set to ' + prefix + '.')
+                else:
+                    await message.reply('Prefix must be exactly 1 character long.')
             else:
                 await message.reply(NO_PERMISSION)
 
