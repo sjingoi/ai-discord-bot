@@ -55,6 +55,8 @@ h1 {
     padding: 1rem;
     background-color: aliceblue;
     transition: 0.2s;
+    display: inline-flex;
+    transform: translate(0, -1rem);
 }
 
 .add p a {
@@ -85,6 +87,7 @@ h1 {
     display: none;
     font-size: 3rem;
     z-index: 1;
+    max-width: 200px;
 }
 
 a:hover {
