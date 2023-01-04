@@ -1,16 +1,11 @@
 from dotenv import load_dotenv, find_dotenv
 import os
 import discord
+import traceback
+
+# PROJECT FILES
 import ai
 import database
-
-env_dir = find_dotenv('secrets.env', True)
-load_dotenv(env_dir)
-
-DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
-VALID_API_KEY = 'Key validated and set.'
-INVALID_API_KEY = 'The key provided is invalid. You can find your API key at https://beta.openai.com/account/api-keys.'
-NO_PERMISSION = 'You do not have permission to use this command.'
 
 
 intents = discord.Intents.default()
@@ -20,27 +15,49 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+env_dir = find_dotenv('secrets.env', True)
+load_dotenv(env_dir)
+
+# CONSTANT DECLARATIONS
+DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
+BOT_ADMIN_ID = int(os.environ["BOT_ADMIN_ID"])
+VALID_API_KEY = 'Key validated and set.'
+INVALID_API_KEY = 'The key provided is invalid. You can find your API key at https://beta.openai.com/account/api-keys.'
+NO_PERMISSION = 'You do not have permission to use this command.'
 
 @client.event
 async def on_message(message):
+
+    # CHECKS IF MESSAGE IS FROM THIS BOT
     if message.author == client.user:
         return
 
-    content = message.content
+    try:
+        content = message.content
 
-    
-    server_id = message.guild.id
-    server_name = message.guild.name
+        # SERVER PROPERTIES
+        server_id = message.guild.id
+        server_name = message.guild.name
+        server_prefix = database.get_cmd_prefix(server_id)
 
-    server_prefix = database.get_cmd_prefix(server_id)
+        # ADDS SERVER IF IT IS NOT IN DATABASE
+        if server_prefix == None and not database.server_in_database(server_id):
+            database.add_server(server_id, server_name)
+            server_prefix = '$'
 
-    if server_prefix == None and not database.server_in_database(server_id):
-        database.add_server(server_id, server_name)
-        server_prefix = '$'
+        # CHECKS IF MESSAGE IS A COMMAND
+        if content.startswith(server_prefix):
+            command = content[1:].lstrip()
+            await execute_cmd(command, message)
 
-    if content.startswith(server_prefix):
-        content = content[1:].lstrip()
-        await execute_cmd(content, message)
+    except Exception as e:
+        # SENDS A MESSAGE TO BOT ADMIN IN CASE OF ERROR
+        bot_admin = client.get_user(BOT_ADMIN_ID)
+        await bot_admin.send("Bot encountered an error: \n`" + str(e) + "`")
+        await bot_admin.send("\n Server: " + server_name + "\n")
+
+        traceback.print_exc()
+        
 
 
 async def execute_cmd(command: str, message = None):
