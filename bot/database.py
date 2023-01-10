@@ -5,58 +5,85 @@ from dotenv import load_dotenv, find_dotenv
 env_dir = find_dotenv('secrets.env', True)
 load_dotenv(env_dir)
 
+# MYSQL CREDENTIALS
 HOST = os.environ["DB_IP"]
 DATABASE = os.environ["DB_NAME"]
 USERNAME = os.environ["DB_USER"]
 PASSWORD = os.environ["DB_PASSWORD"]
 
+# TABLES
+SERVERS_TABLE = "dservers"
+SERVER_ID_COL = "server_id"
+SERVER_NAME_COL = "server_name"
+SERVER_CMD_PFX_COL = "cmd_prefix"
+SERVER_AI_KEY_COL = "openai_key"
+SERVER_OWNER_COL = "owner_id"
+USERS_TABLE = "users"
+USER_ID_COL = "user_id"
+USER_NAME_COL = "user_name"
+USER_NUM_OF_REQ_COL = "num_of_req"
 
-mydb = mysql.connector.connect(
-    host = HOST,
-    user = USERNAME,
-    password = PASSWORD,
-    database = DATABASE
-)
+
+def get_connection():
+    mydb = mysql.connector.connect(
+        host = HOST,
+        user = USERNAME,
+        password = PASSWORD,
+        database = DATABASE
+    )
+    return mydb
 
 
-def add_server(id: int, name: str, cmd_prefix: str = '$', openai_key: str = None) -> None:
+def add_server(server_id: int, name: str, owner_id: int) -> None:
+    mydb = get_connection()
     dbcursor = mydb.cursor()
-    sql = "INSERT INTO dservers (server_id, server_name, cmd_prefix, openai_key) VALUES (%s, %s, %s, %s)"
-    val = (id, name, cmd_prefix, openai_key)
+    sql = "INSERT INTO dservers (server_id, server_name, cmd_prefix, openai_key, owner_id) VALUES (%s, %s, %s, %s, %s)"
+    val = (server_id, name, cmd_prefix, openai_key, owner_id)
     dbcursor.execute(sql, val)
     mydb.commit()
+    dbcursor.close()
+    mydb.close()
 
 
-def get_ai_key(server_id: int):
-    return get_from_dserver_table(server_id, "openai_key")
-
-
-def get_cmd_prefix(server_id: int):
-    return get_from_dserver_table(server_id, "cmd_prefix")
-
-
-def get_from_dserver_table(server_id: int, collumn: str):
+def add_user(user_id: int, user_name: str):
+    print("Hello")
+    mydb = get_connection()
     dbcursor = mydb.cursor()
-    dbcursor.execute("SELECT " + collumn + " FROM dservers WHERE server_id = " + str(server_id))
+    sql = "INSERT INTO users (user_id, user_name) VALUES (%s, %s)"
+    val = (user_id, user_name)
+    dbcursor.execute(sql, val)
+    mydb.commit()
+    dbcursor.close()
+    mydb.close()
+
+
+def in_table(table: str, key_col: str, key: int) -> bool:
+    return not get_from_table(table, key_col, key, key_col) is None
+
+
+def increment(table: str, key_col: str, key: int, collumn: str, ammount: int = 1):
+    mydb = get_connection()
+    dbcursor = mydb.cursor()
+    dbcursor.execute("UPDATE " + table + " SET " + collumn + " = " +  collumn + " + " + str(ammount) + " WHERE " + key_col + " = " + str(key))
+    mydb.commit()
+    dbcursor.close()
+    mydb.close()
+
+
+def update_table(table: str, key_col: str, key: int, collumn: str, value):
+    mydb = get_connection()
+    dbcursor = mydb.cursor()
+    dbcursor.execute("UPDATE " + table + " SET " + collumn + " = '" + str(value) + "' WHERE " + key_col + " = " + str(key))
+    mydb.commit()
+    dbcursor.close()
+    mydb.close()
+
+
+def get_from_table(table: str, key_col: str, key: int, collumn: str):
+    mydb = get_connection()
+    dbcursor = mydb.cursor()
+    dbcursor.execute("SELECT " + collumn + " FROM " + table + " WHERE " + key_col + " = " + str(key))
     for key in dbcursor:
         return key[0]
-
-
-def update_openai_key(server_id: int, key: int):
-    update_dserver(server_id, "openai_key", key)
-
-
-def update_prefix(server_id: int, prefix: str):
-    update_dserver(server_id, "cmd_prefix", prefix)
-
-
-def update_dserver(server_id: int, collumn: str, value: str):
-    dbcursor = mydb.cursor()
-    dbcursor.execute("UPDATE dservers SET " + collumn + " = '" + value + "' WHERE server_id = " + str(server_id))
-    mydb.commit()
-
-
-def server_in_database(server_id: int) -> bool:
-    if get_from_dserver_table(server_id, "server_name") is None:
-        return False
-    return True
+    dbcursor.close()
+    mydb.close()
