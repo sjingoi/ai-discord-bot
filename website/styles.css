@@ -100,4 +100,8 @@ a:hover {
     .GPTBot {
         transform: translate(-0.7rem, 0);
     }
+
+    .add p a {
+        padding: 1rem;
+    }
 }
