@@ -21,6 +21,7 @@ load_dotenv(env_dir)
 # CONSTANT DECLARATIONS
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
 BOT_ADMIN_ID = int(os.environ["BOT_ADMIN_ID"])
+# JOIN_MESSAGE = 
 VALID_API_KEY = 'Key validated and set.'
 INVALID_API_KEY = 'The key provided is invalid. You can find your API key at https://beta.openai.com/account/api-keys.'
 NO_PERMISSION = 'You do not have permission to use this command.'
@@ -30,6 +31,11 @@ from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_NAME_COL, SERVER_CMD_P
 from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL
 
 ### BOT ##########################################################################
+
+# @client.event
+# async def on_guild_join(guild):
+#     await guild.owner.send("Hello")
+
 
 @client.event
 async def on_message(message):
