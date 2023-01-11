@@ -37,8 +37,8 @@ def get_connection():
 def add_server(server_id: int, name: str, owner_id: int) -> None:
     mydb = get_connection()
     dbcursor = mydb.cursor()
-    sql = "INSERT INTO dservers (server_id, server_name, cmd_prefix, openai_key, owner_id) VALUES (%s, %s, %s, %s, %s)"
-    val = (server_id, name, cmd_prefix, openai_key, owner_id)
+    sql = "INSERT INTO dservers (server_id, server_name, owner_id) VALUES (%s, %s, %s)"
+    val = (server_id, name, owner_id)
     dbcursor.execute(sql, val)
     mydb.commit()
     dbcursor.close()
