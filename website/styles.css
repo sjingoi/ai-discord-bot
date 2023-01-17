@@ -56,11 +56,12 @@ h1 {
 
 .main p a {
     color: black;
-    border-radius: 3rem;
-    padding: 1.5rem;
+    border-radius: 1.2rem;
+    padding: 1rem;
     background-color: aliceblue;
     display: inline-flex;
     transform: translate(0, -2rem);
+    margin-left: 0.1rem;
 }
 
 .add p a {
@@ -78,7 +79,6 @@ h1 {
     transform: translate(0rem, -2rem);
     margin: 1rem;
     font-size: 2rem;
-    font-weight: bold;
 }
 
 .toggle-button {
@@ -122,12 +122,12 @@ a:hover {
     display: list-item;
     font-size: 100%;
     width: 50%;
-    transform: translate(20%);
-    padding: 0.5rem 10vw 0.5rem 10vw;
+    transform: translate(30%);
+    padding: 0.5rem 6vw 0.5rem 6vw;
     background-color: rgb(30 32 40);
     overflow-wrap: break-word;
     list-style: none;
-    border-radius: 4rem;
+    border-radius: 2.5rem;
     border: 2px solid #777;
 }
 
