@@ -112,11 +112,7 @@ a:hover {
 /* For tutorial.html */
 
 .title {
-<<<<<<< HEAD
     font-size: 8vw;
-=======
-    font-size: 4rem;
->>>>>>> 0e7da68683258e6670ea078ae161cb383687d249
     text-decoration: underline;
     text-align: center;
     overflow-wrap: break-word;
@@ -124,11 +120,7 @@ a:hover {
 
 .help-commands {
     display: list-item;
-<<<<<<< HEAD
     font-size: 1.5vw;
-=======
-    font-size: 1.5rem;
->>>>>>> 0e7da68683258e6670ea078ae161cb383687d249
     width: 50%;
     transform: translate(20%);
     padding: 0.5rem 10vw 0.5rem 10vw;
