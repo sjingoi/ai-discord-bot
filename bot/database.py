@@ -1,6 +1,8 @@
 import mysql.connector
 import os
+import re
 from dotenv import load_dotenv, find_dotenv
+from datetime import datetime
 
 env_dir = find_dotenv('secrets.env', True)
 load_dotenv(env_dir)
@@ -24,6 +26,7 @@ USER_NAME_COL = "user_name"
 USER_NUM_OF_REQ_COL = "num_of_req"
 USER_CMD_PFX_COL = "cmd_prefix"
 USER_AI_KEY_COL = "openai_key"
+USER_LAST_REQ_TIME_COL = "last_req"
 
 def get_connection():
     mydb = mysql.connector.connect(
@@ -71,9 +74,13 @@ def increment(table: str, key_col: str, key: int, collumn: str, ammount: int = 1
 
 
 def update_table(table: str, key_col: str, key: int, collumn: str, value):
+    
     mydb = get_connection()
     dbcursor = mydb.cursor()
-    dbcursor.execute("UPDATE " + table + " SET " + collumn + " = '" + str(value) + "' WHERE " + key_col + " = " + str(key))
+    if value is None:
+        dbcursor.execute("UPDATE " + table + " SET " + collumn + " = NULL WHERE " + key_col + " = " + str(key))
+    else:
+        dbcursor.execute("UPDATE " + table + " SET " + collumn + " = '" + str(value) + "' WHERE " + key_col + " = " + str(key))
     mydb.commit()
     dbcursor.close()
     mydb.close()
@@ -87,3 +94,16 @@ def get_from_table(table: str, key_col: str, key: int, collumn: str):
         return key[0]
     dbcursor.close()
     mydb.close()
+
+
+def format_date_time(date_time: datetime) -> int:
+    return date_time.strftime("%Y-%m-%d %H:%M:%S")
+
+def time_to_seconds(time: str):
+    time_lst = re.split(r"-|:| ", time)
+
+    for i in range(len(time_lst)):
+        time_lst[i] = int(time_lst[i])
+
+    dt = datetime(time_lst[0], time_lst[1], time_lst[2], time_lst[3], time_lst[4], time_lst[5])
+    return int(dt.timestamp())
