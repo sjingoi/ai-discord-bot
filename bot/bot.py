@@ -1,4 +1,5 @@
 from dotenv import load_dotenv, find_dotenv
+from datetime import datetime
 import os
 import discord
 import traceback
@@ -21,14 +22,18 @@ load_dotenv(env_dir)
 # CONSTANT DECLARATIONS
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
 BOT_ADMIN_ID = int(os.environ["BOT_ADMIN_ID"])
+DEFAULT_API_KEY = os.environ["OPEN_AI_KEY"]
+DEFAULT_REQ_INTERVAL = int(os.environ["DEFAULT_REQ_INTERVAL"])
 JOIN_MESSAGE = "Hi, it seems like you or one of your members has added me to your lovely server!\n\nHere are some commands to get started:\n\n```\n$ai [your message here] - Use this to talk with the bot!\n\n$setprefix [Your custom prefix here] - Allows you to change character in front of message (Default is $)\n\n$setkey [Your key pasted from the OpenAI website] - Allows you to use your own key for the bot, letting you use it for longer. (HIGHLY RECOMMENDED) \n\n$help - When you need a reminder of the commands for the bot```"
 VALID_API_KEY = 'Key validated and set.'
+KEY_REMOVED = 'API key has been removed. You are now using the default.'
 INVALID_API_KEY = 'The key provided is invalid. You can find your API key at https://beta.openai.com/account/api-keys.'
 NO_PERMISSION = 'You do not have permission to use this command.'
-HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey - set api key\n$setprefix - Change the command prefix (default = $)\nMessage <@' + str(BOT_ADMIN_ID) + '> for more help'
+HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey - set api key\n$setprefix - Change the command prefix (default = $)\nMessage #SebiKetchup#8833 for more help'
+WAIT_MSG = 'Please wait {seconds} seconds before sending another request. (set your own API key using $setkey [key] to bypass this)'
 
 from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_NAME_COL, SERVER_CMD_PFX_COL, SERVER_AI_KEY_COL, SERVER_OWNER_COL
-from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL, USER_CMD_PFX_COL, USER_AI_KEY_COL
+from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL, USER_CMD_PFX_COL, USER_AI_KEY_COL, USER_LAST_REQ_TIME_COL
 
 ### BOT ##########################################################################
 
@@ -86,7 +91,6 @@ async def execute_cmd(command: str, message = None):
     user_id = message.author.id
     match command.split():
 
-
         # AI COMMAND
         case ["ai", *args]:
             database.increment(USERS_TABLE, USER_ID_COL, user_id, USER_NUM_OF_REQ_COL)
@@ -96,11 +100,32 @@ async def execute_cmd(command: str, message = None):
             else:
                 api_key = database.get_from_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL)
 
-            prompt = lst_to_string(args)
-            ai_response = await ai.query_ai(prompt, api_key)
             
-            for section in range(0, len(ai_response), 2000):
-                await message.reply(ai_response[section:section + 2000])
+            if api_key is None:
+                api_key = DEFAULT_API_KEY
+                req_time_sec = int(datetime.now().timestamp())
+                last_req_time = database.get_from_table(USERS_TABLE, USER_ID_COL, user_id, USER_LAST_REQ_TIME_COL)
+                last_req_time_sec = database.time_to_seconds(str(last_req_time))
+
+                if req_time_sec - last_req_time_sec  >= DEFAULT_REQ_INTERVAL:
+                    prompt = lst_to_string(args)
+                    ai_response = await ai.query_ai(prompt, api_key)
+
+                    time = database.format_date_time(datetime.now())
+                    database.update_table(USERS_TABLE, USER_ID_COL, user_id, USER_LAST_REQ_TIME_COL, time)
+                    for section in range(0, len(ai_response), 2000):
+                        await message.reply(ai_response[section:section + 2000])
+                else:
+                    await message.reply(WAIT_MSG.format(seconds = DEFAULT_REQ_INTERVAL - (req_time_sec - last_req_time_sec)))
+
+            else:
+                prompt = lst_to_string(args)
+                ai_response = await ai.query_ai(prompt, api_key)
+                for section in range(0, len(ai_response), 2000):
+                    await message.reply(ai_response[section:section + 2000])
+            
+            
+            
 
 
         # SET COMMAND PREFIX
@@ -117,7 +142,17 @@ async def execute_cmd(command: str, message = None):
             else:
                 await message.reply('Prefix must be exactly 1 character long.')
             
-                
+
+        # REMOVE OPENAI KEY
+        case ["setkey"]:  
+            if server_id is None:
+                database.update_table(USERS_TABLE, USER_ID_COL, user_id, USER_AI_KEY_COL, None)
+            else:
+                if message.author.guild_permissions.administrator:
+                    database.update_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL, None)
+                else:
+                    await message.reply(NO_PERMISSION)
+            await message.reply(KEY_REMOVED)
 
 
         # SET OPENAI API KEY
@@ -133,8 +168,7 @@ async def execute_cmd(command: str, message = None):
                 await message.reply(VALID_API_KEY)
             else:
                 await message.reply(INVALID_API_KEY)
-            
-
+        
 
         # HELP MESSAGE
         case ["help", *args]:
