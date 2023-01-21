@@ -16,14 +16,14 @@ async def get_ai_response(input_txt: str, api_key:str) -> str:
         engine="text-davinci-003",
         max_tokens=1000,
         prompt=input_txt,
-        temperature=0.5
+        temperature=0.7
     )
 
     return response['choices'][0]['text']
 
 async def query_ai(prompt: str, api_key: str) -> str:
     try:
-        ai_response = await get_ai_response(prompt, api_key)
+        ai_response = await get_ai_response(prompt + "\n", api_key)
     except openai.error.AuthenticationError:
         ai_response = AI_INVALID_KEY_MESSAGE
     except openai.error.RateLimitError:
