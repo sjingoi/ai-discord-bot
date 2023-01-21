@@ -28,7 +28,7 @@ NO_PERMISSION = 'You do not have permission to use this command.'
 HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey - set api key\n$setprefix - Change the command prefix (default = $)\nMessage <@' + str(BOT_ADMIN_ID) + '> for more help'
 
 from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_NAME_COL, SERVER_CMD_PFX_COL, SERVER_AI_KEY_COL, SERVER_OWNER_COL
-from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL
+from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL, USER_CMD_PFX_COL, USER_AI_KEY_COL
 
 ### BOT ##########################################################################
 
@@ -48,14 +48,20 @@ async def on_message(message):
         user = message.author
         update_user(user)
 
-        server_id = message.guild.id
-        update_server(message.guild)
+        if message.guild != None:
+            server_id = message.guild.id
+            update_server(message.guild)
 
-        server_prefix = database.get_from_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_CMD_PFX_COL)
+            prefix = database.get_from_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_CMD_PFX_COL)
+        
+        else:
+            server_id = None
+
+            prefix = database.get_from_table(USERS_TABLE, USER_ID_COL, user.id, USER_CMD_PFX_COL)
 
         # CHECKS IF MESSAGE IS A COMMAND
         content = message.content 
-        if content.startswith(server_prefix):
+        if content.startswith(prefix):
             command = content[1:].lstrip()
             await execute_cmd(command, message)
 
@@ -69,7 +75,14 @@ async def on_message(message):
 
 
 async def execute_cmd(command: str, message = None):
-    server_id = message.guild.id
+    user_id = message.author.id
+
+    if message.guild != None:
+        server_id = message.guild.id
+
+    else:
+        server_id = None
+    
     user_id = message.author.id
     match command.split():
 
@@ -78,8 +91,13 @@ async def execute_cmd(command: str, message = None):
         case ["ai", *args]:
             database.increment(USERS_TABLE, USER_ID_COL, user_id, USER_NUM_OF_REQ_COL)
 
+            if server_id is None:
+                api_key = database.get_from_table(USERS_TABLE, USER_ID_COL, user_id, USER_AI_KEY_COL)
+            else:
+                api_key = database.get_from_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL)
+
             prompt = lst_to_string(args)
-            ai_response = await ai.query_ai(prompt, server_id)
+            ai_response = await ai.query_ai(prompt, api_key)
             
             for section in range(0, len(ai_response), 2000):
                 await message.reply(ai_response[section:section + 2000])
@@ -87,27 +105,38 @@ async def execute_cmd(command: str, message = None):
 
         # SET COMMAND PREFIX
         case ["setprefix", prefix]:
-            if message.author.guild_permissions.administrator:
-                if len(prefix) == 1:
-                    database.update_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_CMD_PFX_COL, prefix)
-                    await message.reply('Prefix set to ' + prefix + '.')
+            if len(prefix) == 1:
+                if server_id is None:
+                    database.update_table(USERS_TABLE, USER_ID_COL, user_id, USER_CMD_PFX_COL, prefix)
                 else:
-                    await message.reply('Prefix must be exactly 1 character long.')
+                    if message.author.guild_permissions.administrator:
+                        database.update_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_CMD_PFX_COL, prefix)
+                    else:
+                        await message.reply(NO_PERMISSION)
+                await message.reply('Prefix set to ' + prefix + '.')
             else:
-                await message.reply(NO_PERMISSION)
+                await message.reply('Prefix must be exactly 1 character long.')
+            
+                
 
 
         # SET OPENAI API KEY
         case ["setkey", key]:
-            if message.author.guild_permissions.administrator:
-                if await ai.is_valid_key(key):
-                    database.update_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL, key)
-                    await message.reply(VALID_API_KEY)
+            if await ai.is_valid_key(key):
+                if server_id is None:
+                    database.update_table(USERS_TABLE, USER_ID_COL, user_id, USER_AI_KEY_COL, key)
                 else:
-                    await message.reply(INVALID_API_KEY)
+                    if message.author.guild_permissions.administrator:
+                        database.update_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL, key)
+                    else:
+                        await message.reply(NO_PERMISSION)
+                await message.reply(VALID_API_KEY)
             else:
-                await message.reply(NO_PERMISSION)
+                await message.reply(INVALID_API_KEY)
             
+
+
+        # HELP MESSAGE
         case ["help", *args]:
             await message.channel.send(HELP_MSG)
 

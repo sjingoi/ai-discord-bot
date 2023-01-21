@@ -22,7 +22,8 @@ USERS_TABLE = "users"
 USER_ID_COL = "user_id"
 USER_NAME_COL = "user_name"
 USER_NUM_OF_REQ_COL = "num_of_req"
-
+USER_CMD_PFX_COL = "cmd_prefix"
+USER_AI_KEY_COL = "openai_key"
 
 def get_connection():
     mydb = mysql.connector.connect(
@@ -46,7 +47,6 @@ def add_server(server_id: int, name: str, owner_id: int) -> None:
 
 
 def add_user(user_id: int, user_name: str):
-    print("Hello")
     mydb = get_connection()
     dbcursor = mydb.cursor()
     sql = "INSERT INTO users (user_id, user_name) VALUES (%s, %s)"

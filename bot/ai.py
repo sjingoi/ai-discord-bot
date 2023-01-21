@@ -21,8 +21,7 @@ async def get_ai_response(input_txt: str, api_key:str) -> str:
 
     return response['choices'][0]['text']
 
-async def query_ai(prompt: str, server_id: int) -> str:
-    api_key = database.get_from_table(SERVERS_TABLE, SERVER_ID_COL, server_id, SERVER_AI_KEY_COL)
+async def query_ai(prompt: str, api_key: str) -> str:
     try:
         ai_response = await get_ai_response(prompt, api_key)
     except openai.error.AuthenticationError:
