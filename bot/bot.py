@@ -39,7 +39,8 @@ from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_CO
 
 @client.event
 async def on_guild_join(guild):
-    await guild.owner.send(JOIN_MESSAGE)
+    # await guild.owner.send(JOIN_MESSAGE)
+    update_server(guild)
 
 
 @client.event
