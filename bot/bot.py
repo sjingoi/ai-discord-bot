@@ -29,7 +29,7 @@ VALID_API_KEY = 'Key validated and set.'
 KEY_REMOVED = 'You are now using the default key. To get an api key, go to https://beta.openai.com/account/api-keys.'
 INVALID_API_KEY = 'The key provided is invalid. You can find an API key at https://beta.openai.com/account/api-keys.'
 NO_PERMISSION = 'You do not have permission to use this command.'
-HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey - set api key\n$setprefix - Change the command prefix (default = $)\nMessage #SebiKetchup#8833 for more help'
+HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey [key] - set api key\n$setkey - removes the set key\n$setprefix - Change the command prefix (default = $)\nMessage #SebiKetchup#8833 for more help'
 WAIT_MSG = 'Please wait {seconds} seconds before sending another request. Set an api key using $setkey [key] to bypass this.'
 
 from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_NAME_COL, SERVER_CMD_PFX_COL, SERVER_AI_KEY_COL, SERVER_OWNER_COL
