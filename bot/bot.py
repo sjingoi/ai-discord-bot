@@ -26,11 +26,11 @@ DEFAULT_API_KEY = os.environ["OPEN_AI_KEY"]
 DEFAULT_REQ_INTERVAL = int(os.environ["DEFAULT_REQ_INTERVAL"])
 JOIN_MESSAGE = "Hi, it seems like you or one of your members has added me to your lovely server!\n\nHere are some commands to get started:\n\n```\n$ai [your message here] - Use this to talk with the bot!\n\n$setprefix [Your custom prefix here] - Allows you to change character in front of message (Default is $)\n\n$setkey [Your key pasted from the OpenAI website] - Allows you to use your own key for the bot, letting you use it for longer. (HIGHLY RECOMMENDED) \n\n$help - When you need a reminder of the commands for the bot```"
 VALID_API_KEY = 'Key validated and set.'
-KEY_REMOVED = 'API key has been removed. You are now using the default.'
-INVALID_API_KEY = 'The key provided is invalid. You can find your API key at https://beta.openai.com/account/api-keys.'
+KEY_REMOVED = 'You are now using the default key. To get an api key, go to https://beta.openai.com/account/api-keys.'
+INVALID_API_KEY = 'The key provided is invalid. You can find an API key at https://beta.openai.com/account/api-keys.'
 NO_PERMISSION = 'You do not have permission to use this command.'
 HELP_MSG = 'Commands:\n$ai - talk to ai\n$setkey - set api key\n$setprefix - Change the command prefix (default = $)\nMessage #SebiKetchup#8833 for more help'
-WAIT_MSG = 'Please wait {seconds} seconds before sending another request. (set your own API key using $setkey [key] to bypass this)'
+WAIT_MSG = 'Please wait {seconds} seconds before sending another request. Set an api key using $setkey [key] to bypass this.'
 
 from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_NAME_COL, SERVER_CMD_PFX_COL, SERVER_AI_KEY_COL, SERVER_OWNER_COL
 from database import USERS_TABLE, USER_ID_COL, USER_NAME_COL, USER_NUM_OF_REQ_COL, USER_CMD_PFX_COL, USER_AI_KEY_COL, USER_LAST_REQ_TIME_COL
@@ -124,9 +124,6 @@ async def execute_cmd(command: str, message = None):
                 ai_response = await ai.query_ai(prompt, api_key)
                 for section in range(0, len(ai_response), 2000):
                     await message.reply(ai_response[section:section + 2000])
-            
-            
-            
 
 
         # SET COMMAND PREFIX
