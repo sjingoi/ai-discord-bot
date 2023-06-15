@@ -4,7 +4,7 @@ import traceback
 
 AI_ERROR_MESSAGE = 'An internal error has occured. Please try again in a few moments.'
 AI_INVALID_KEY_MESSAGE = 'No valid API key provided. To set an API key, use the "setkey" command in a private channel. You can find your API key at https://beta.openai.com/account/api-keys.'
-AI_KEY_CREDIT_ERROR = 'The given open ai key no longer has any credit. You can check your credit and usage by going to https://beta.openai.com/account/usage'
+AI_KEY_CREDIT_ERROR = 'Either the open ai servers are overloaded, or given open ai key no longer has any credit. You can check your credit and usage by going to https://beta.openai.com/account/usage'
 TEST_CASE = 'What is 1+1?'
 
 from database import SERVERS_TABLE, SERVER_ID_COL, SERVER_AI_KEY_COL

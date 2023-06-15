@@ -78,9 +78,15 @@ def update_table(table: str, key_col: str, key: int, collumn: str, value):
     mydb = get_connection()
     dbcursor = mydb.cursor()
     if value is None:
-        dbcursor.execute("UPDATE " + table + " SET " + collumn + " = NULL WHERE " + key_col + " = " + str(key))
+        # dbcursor.execute("UPDATE " + table + " SET " + collumn + " = NULL WHERE " + key_col + " = %s")
+        sql = "UPDATE " + table + " SET " + collumn + " = NULL WHERE " + key_col + " = %s"
+        val = (str(key), )
+        dbcursor.execute(sql, val)
     else:
-        dbcursor.execute("UPDATE " + table + " SET " + collumn + " = '" + str(value) + "' WHERE " + key_col + " = " + str(key))
+        #dbcursor.execute("UPDATE " + table + " SET " + collumn + " = '%s' WHERE " + key_col + " = %s")
+        sql = "UPDATE " + table + " SET " + collumn + " = %s WHERE " + key_col + " = %s"
+        val = (str(value), str(key))
+        dbcursor.execute(sql, val)
     mydb.commit()
     dbcursor.close()
     mydb.close()
